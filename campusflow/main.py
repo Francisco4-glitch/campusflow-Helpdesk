@@ -1,0 +1,123 @@
+from campusflow.tickets import create_ticket
+from campusflow.storage import load_tickets, save_tickets
+from campusflow.workflow import (
+    assign_ticket,
+    update_ticket_status,
+    get_queue,
+    generate_report,
+)
+
+
+def display_tickets(tickets):
+    """Display tickets in priority order."""
+    if not tickets:
+        print("\nNo tickets found.")
+        return
+
+    for ticket in get_queue(tickets):
+        print(
+            f"\nID: {ticket['id']}"
+            f"\nTitle: {ticket['title']}"
+            f"\nCategory: {ticket['category']}"
+            f"\nPriority: {ticket['priority']}"
+            f"\nStatus: {ticket['status']}"
+            f"\nAssigned to: {ticket['assigned_to']}"
+        )
+
+
+def create_new_ticket(tickets):
+    """Collect information and create a ticket."""
+    try:
+        title = input("Ticket title: ")
+        category = input("Category (Network/Hardware/Software/Other): ")
+        urgency = input("Urgency (low/medium/high): ")
+        affected_users = input("Number of affected users: ")
+
+        ticket = create_ticket(
+            title, category, urgency, affected_users, tickets
+        )
+
+        save_tickets(tickets)
+        print(f"\nTicket {ticket['id']} created successfully!")
+
+    except ValueError as error:
+        print(f"\nError: {error}")
+
+
+def assign_existing_ticket(tickets):
+    """Assign a ticket to a staff member."""
+    ticket_id = input("Ticket ID: ")
+    staff_name = input("Staff member's name: ")
+
+    if assign_ticket(tickets, ticket_id, staff_name):
+        save_tickets(tickets)
+        print("Ticket assigned successfully.")
+    else:
+        print("Assignment failed. Check the ticket ID and staff name.")
+
+
+def change_ticket_status(tickets):
+    """Update a ticket's status."""
+    ticket_id = input("Ticket ID: ")
+    status = input("New status (open/in_progress/resolved): ")
+
+    if update_ticket_status(tickets, ticket_id, status):
+        save_tickets(tickets)
+        print("Ticket status updated successfully.")
+    else:
+        print("Update failed. Check the ticket ID and status.")
+
+
+def show_report(tickets):
+    """Display ticket statistics."""
+    report = generate_report(tickets)
+
+    print(f"\nTotal tickets: {report['total']}")
+
+    print("\nTickets by status:")
+    for status, count in report["by_status"].items():
+        print(f"{status}: {count}")
+
+    print("\nTickets by priority:")
+    for priority, count in report["by_priority"].items():
+        print(f"{priority}: {count}")
+
+
+def main():
+    """Run the CampusFlow Helpdesk application."""
+    try:
+        tickets = load_tickets()
+    except (ValueError, OSError) as error:
+        print(f"Could not load tickets: {error}")
+        return
+
+    while True:
+        print("\n===== CAMPUSFLOW HELPDESK =====")
+        print("1. Create ticket")
+        print("2. View tickets")
+        print("3. Assign ticket")
+        print("4. Update ticket status")
+        print("5. View report")
+        print("6. Exit")
+
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            create_new_ticket(tickets)
+        elif choice == "2":
+            display_tickets(tickets)
+        elif choice == "3":
+            assign_existing_ticket(tickets)
+        elif choice == "4":
+            change_ticket_status(tickets)
+        elif choice == "5":
+            show_report(tickets)
+        elif choice == "6":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please choose 1 to 6.")
+
+
+if __name__ == "__main__":
+    main()
