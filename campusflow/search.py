@@ -158,3 +158,4 @@ def sort_search_results(tickets):
         )
 
     return sorted(tickets, key=sort_key)
+    
