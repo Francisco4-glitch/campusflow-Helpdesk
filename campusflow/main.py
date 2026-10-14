@@ -6,6 +6,23 @@ from campusflow.workflow import (
     get_queue,
     generate_report,
 )
+from campusflow.search import (
+    search_tickets,
+    search_tickets_cli,
+    sort_search_results,
+)
+
+from campusflow.reports import display_report
+
+from campusflow.notes_cli import (
+    add_follow_up_note,
+    view_ticket_notes,
+)
+
+from campusflow.understanding_check import (
+    run_understanding_check,
+)
+
 
 
 def display_tickets(tickets):
@@ -98,7 +115,10 @@ def main():
         print("3. Assign ticket")
         print("4. Update ticket status")
         print("5. View report")
-        print("6. Exit")
+        print("6. Search tickets")
+        print("7. Engineering Understanding Check")
+        print("8. View Ticket Notes")
+        print("9. Exit")
 
         choice = input("Choose an option: ").strip()
 
@@ -113,10 +133,16 @@ def main():
         elif choice == "5":
             show_report(tickets)
         elif choice == "6":
+            search_tickets_cli(tickets)
+        elif choice == "7":
+            engineering_understanding_check
+        elif choice == "8":
+            view_ticket_notes
+        elif choice == "6":
             print("Goodbye!")
             break
         else:
-            print("Invalid choice. Please choose 1 to 6.")
+            print("Invalid choice. Please choose 1 to 8.")
 
 
 if __name__ == "__main__":

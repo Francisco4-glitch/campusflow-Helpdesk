@@ -158,4 +158,102 @@ def sort_search_results(tickets):
         )
 
     return sorted(tickets, key=sort_key)
-    
+
+
+def _prompt_filter(
+    prompt,
+    allowed_values,
+    field_name,
+    input_fn,
+    output_fn,
+):
+    """Prompt until the user supplies a valid filter or leaves it blank."""
+
+    while True:
+        value = input_fn(prompt).strip()
+
+        if not value:
+            return None
+
+        try:
+            return _normalise_filter(
+                value,
+                allowed_values,
+                field_name,
+            )
+        except ValueError as error:
+            output_fn(str(error))
+            output_fn("Please try again.")
+
+
+def search_tickets_cli(
+    tickets,
+    input_fn=None,
+    output_fn=None,
+):
+    """Collect search criteria, search tickets, and display results."""
+
+    if input_fn is None:
+        input_fn = input
+
+    if output_fn is None:
+        output_fn = print
+
+    output_fn("\n========== SEARCH TICKETS ==========")
+
+    title = input_fn(
+        "Title contains (press Enter to skip): "
+    )
+
+    category = _prompt_filter(
+        "Category (Network/Hardware/Software/Other): ",
+        ALLOWED_CATEGORIES,
+        "category",
+        input_fn,
+        output_fn,
+    )
+
+    status = _prompt_filter(
+        "Status (open/in_progress/resolved): ",
+        ALLOWED_STATUSES,
+        "status",
+        input_fn,
+        output_fn,
+    )
+
+    priority = _prompt_filter(
+        "Priority (critical/high/medium/low): ",
+        ALLOWED_PRIORITIES,
+        "priority",
+        input_fn,
+        output_fn,
+    )
+
+    results = search_tickets(
+        tickets,
+        title=title,
+        category=category,
+        status=status,
+        priority=priority,
+    )
+
+    if not results:
+        output_fn("No matching tickets found.")
+        return results
+
+    output_fn(f"\nFound {len(results)} matching ticket(s).")
+
+    for ticket in results:
+        output_fn("-" * 40)
+        output_fn(f"ID: {_get_value(ticket, 'id')}")
+        output_fn(f"Title: {_get_value(ticket, 'title')}")
+        output_fn(f"Category: {_get_value(ticket, 'category')}")
+        output_fn(f"Priority: {_get_value(ticket, 'priority')}")
+        output_fn(f"Status: {_get_value(ticket, 'status')}")
+
+        assigned_to = _get_value(ticket, "assigned_to")
+        output_fn(f"Assigned to: {assigned_to or 'Unassigned'}")
+
+    output_fn("-" * 40)
+
+    return results
