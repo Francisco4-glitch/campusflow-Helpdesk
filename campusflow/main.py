@@ -85,10 +85,10 @@ def change_ticket_status(tickets):
         print("Update failed. Check the ticket ID and status.")
 
 
-def show_report(tickets):
-    """Display ticket statistics."""
-    report = generate_report(tickets)
-
+def def show_report(tickets):
+    """Display complete ticket statistics."""
+    display_report(tickets)
+    
     print(f"\nTotal tickets: {report['total']}")
 
     print("\nTickets by status:")
@@ -135,14 +135,14 @@ def main():
         elif choice == "6":
             search_tickets_cli(tickets)
         elif choice == "7":
-            engineering_understanding_check
+            engineering_understanding_check()
         elif choice == "8":
             view_ticket_notes
-        elif choice == "6":
+        elif choice == "9":
             print("Goodbye!")
             break
         else:
-            print("Invalid choice. Please choose 1 to 8.")
+            print("Invalid choice. Please choose 1 to 9.")
 
 
 if __name__ == "__main__":

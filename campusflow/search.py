@@ -70,7 +70,7 @@ def search_tickets(
     if not isinstance(title, str):
         raise ValueError("Title search must be text.")
 
-    search_text = title.strip().casefold()
+    search_text = title.strip().casefold().replace("-", "")
 
     category = _normalise_filter(
         category,
@@ -93,9 +93,13 @@ def search_tickets(
     results = []
 
     for ticket in tickets:
-        ticket_title = _get_value(ticket, "title")
+        ticket_title = (
+            _get_value(ticket, "title")
+            .casefold()
+            .replace("-", "")
+        )
 
-        if search_text not in ticket_title.casefold():
+        if search_text not in ticket_title:
             continue
 
         if (
@@ -119,7 +123,6 @@ def search_tickets(
         results.append(ticket)
 
     return results
-
 
 def sort_search_results(tickets):
     """Sort search results by priority, then numeric ticket ID."""
