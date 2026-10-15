@@ -22,8 +22,21 @@ from campusflow.notes_cli import (
 from campusflow.understanding_check import (
     run_understanding_check,
 )
+from campusflow.notes import add_note
+from campusflow.workflow import (
+    assign_ticket,
+    update_ticket_status,
+    get_queue,
+    generate_report,
+    find_ticket,
+)
 
 
+def save_follow_up_note(tickets, ticket_id, author, message):
+    """Create a note and save the updated tickets."""
+    note_id = add_note(tickets, ticket_id, author, message)
+    save_tickets(tickets)
+    return note_id
 
 def display_tickets(tickets):
     """Display tickets in priority order."""
@@ -85,7 +98,7 @@ def change_ticket_status(tickets):
         print("Update failed. Check the ticket ID and status.")
 
 
-def def show_report(tickets):
+def show_report(tickets):
     """Display complete ticket statistics."""
     display_report(tickets)
     
@@ -118,7 +131,8 @@ def main():
         print("6. Search tickets")
         print("7. Engineering Understanding Check")
         print("8. View Ticket Notes")
-        print("9. Exit")
+        print("9. Add Follow-up Note")
+        print("10. Exit")
 
         choice = input("Choose an option: ").strip()
 
@@ -134,15 +148,30 @@ def main():
             show_report(tickets)
         elif choice == "6":
             search_tickets_cli(tickets)
+        
         elif choice == "7":
-            engineering_understanding_check()
+            run_understanding_check()
+
         elif choice == "8":
-            view_ticket_notes
+            view_ticket_notes(
+                lambda ticket_id: find_ticket(tickets, ticket_id)
+            )
+
         elif choice == "9":
+            add_follow_up_note(
+                lambda ticket_id, author, message:
+                    save_follow_up_note(
+                        tickets, ticket_id, author, message
+                    ),
+                lambda ticket_id: find_ticket(tickets, ticket_id),
+            )
+
+        elif choice == "10":
             print("Goodbye!")
             break
+
         else:
-            print("Invalid choice. Please choose 1 to 9.")
+            print("Invalid choice. Please choose 1 to 10.")
 
 
 if __name__ == "__main__":
