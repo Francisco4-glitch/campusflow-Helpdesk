@@ -8,5 +8,15 @@
         "priority": "critical",
         "status": "open",
         "assigned_to": null
+    },
+    {
+        "id": "T002",
+        "title": "Group is stressing Theo",
+        "category": "Other",
+        "urgency": "high",
+        "affected_users": 10,
+        "priority": "critical",
+        "status": "open",
+        "assigned_to": null
     }
 ]
