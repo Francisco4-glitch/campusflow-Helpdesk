@@ -7,7 +7,14 @@
         "affected_users": 20,
         "priority": "critical",
         "status": "open",
-        "assigned_to": null
+        "assigned_to": "Fred",
+        "notes": [
+            {
+                "note_id": "N001",
+                "author": "Fred",
+                "message": "Ticket will resolved soon"
+            }
+        ]
     },
     {
         "id": "T002",

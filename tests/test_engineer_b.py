@@ -105,7 +105,7 @@ class TestEngineerB(unittest.TestCase):
             for ticket in self.tickets
         ]
 
-        search_tickets(
+    def search_tickets(
             self.tickets,
             title="wifi",
             status="open",
