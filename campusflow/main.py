@@ -99,19 +99,8 @@ def change_ticket_status(tickets):
 
 
 def show_report(tickets):
-    """Display complete ticket statistics."""
-    display_report(tickets)
-    
-    print(f"\nTotal tickets: {report['total']}")
-
-    print("\nTickets by status:")
-    for status, count in report["by_status"].items():
-        print(f"{status}: {count}")
-
-    print("\nTickets by priority:")
-    for priority, count in report["by_priority"].items():
-        print(f"{priority}: {count}")
-
+    """Display complete ticket statistics exactly once."""
+    return display_report(tickets)
 
 def main():
     """Run the CampusFlow Helpdesk application."""
